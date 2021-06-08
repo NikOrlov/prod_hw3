@@ -129,5 +129,11 @@ services:
     image: validate_model
     restart: "no"
 
+  prediction:
+    image: prediction
+    build:
+      context: images/predict
+    restart: 'no'
+
 volumes:
   logs:

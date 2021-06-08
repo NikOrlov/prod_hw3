@@ -22,7 +22,7 @@ def get_data(output_dir: str):
     os.makedirs(output_dir, exist_ok=True)
     csv_args = {'sep': ',', 'header': False, 'index': False}
 
-    pd.DataFrame(train).to_csv(f'{output_dir}/train.csv', **csv_args)
+    pd.DataFrame(train).to_csv(f'{output_dir}/data.csv', **csv_args)
     pd.DataFrame(target).to_csv(f'{output_dir}/target.csv', **csv_args)
 
 

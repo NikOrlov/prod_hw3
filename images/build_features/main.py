@@ -27,7 +27,7 @@ def build_features(path_raw: str):
     path_processed = re.subn('/raw/', '/processed/', path_raw)[0]
     os.makedirs(path_processed, exist_ok=True)
 
-    df_raw = pd.read_csv(f'{path_raw}/train.csv', **csv_args)
+    df_raw = pd.read_csv(f'{path_raw}/data.csv', **csv_args)
     df_raw_target = pd.read_csv(f'{path_raw}/target.csv', **csv_args)
 
     csv_args = {'sep': ',', 'header': False, 'index': False}
