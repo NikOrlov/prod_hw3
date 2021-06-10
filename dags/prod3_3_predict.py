@@ -4,6 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.utils.dates import days_ago
 from utils import default_args, VOLUME
 from airflow.operators.bash import BashOperator
+from airflow.sensors.filesystem import FileSensor
 
 
 # prod_model_path = '{{ var.value.PROD_MODEL_PATH }}'
@@ -18,6 +19,21 @@ with DAG(dag_id='_prod3_3_predict',
     print_var = BashOperator(task_id='print_var',
                              bash_command=f'echo {prod_model_path}')
 
+    data_sensor = FileSensor(task_id='data_sensor',
+                             filepath='data/raw/{{ ds }}/data.csv',
+                             poke_interval=10,
+                             retries=100)
+
+    model_sensor = FileSensor(task_id='model_sensor',
+                              filepath='data/model/{{ ds }}/model.pkl',
+                              poke_interval=10,
+                              retries=100)
+
+    transformer_sensor = FileSensor(task_id='transformer_sensor',
+                                    filepath='data/model/{{ ds }}/transformer.pkl',
+                                    poke_interval=10,
+                                    retries=100)
+
     prediction = DockerOperator(task_id='prediction',
                                 image='prediction',
                                 command='/data/raw/{{ ds }}/ ' + prod_model_path,
@@ -27,5 +43,5 @@ with DAG(dag_id='_prod3_3_predict',
 
     end = DummyOperator(task_id='end')
 
-    start >> print_var >> prediction >> end
+    start >> print_var >> [data_sensor, model_sensor, transformer_sensor] >> prediction >> end
 

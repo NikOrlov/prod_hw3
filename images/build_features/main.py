@@ -6,16 +6,18 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
+import pickle
 
 
-def numerical_pipeline() -> Pipeline:
+def numerical_pipeline(df: pd.DataFrame) -> Pipeline:
     pipe = Pipeline([('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
                      ('normalizer', StandardScaler())])
+    pipe.fit(df)
     return pipe
 
 
 def make_features(df: pd.DataFrame, pipeline: Pipeline) -> pd.DataFrame:
-    df_featured = pipeline.fit_transform(df)
+    df_featured = pipeline.transform(df)
     return pd.DataFrame(df_featured)
 
 
@@ -30,8 +32,16 @@ def build_features(path_raw: str):
     df_raw = pd.read_csv(f'{path_raw}/data.csv', **csv_args)
     df_raw_target = pd.read_csv(f'{path_raw}/target.csv', **csv_args)
 
+    # create and save pipeline for further transformations
+    features_pipeline = numerical_pipeline(df_raw)
+    path_transformer = re.subn('/raw/', '/model/', path_raw)[0]
+
+    os.makedirs(path_transformer, exist_ok=True)
+    with open(f'{path_transformer}/transformer.pkl', 'wb') as file:
+        pickle.dump(features_pipeline, file)
+
     csv_args = {'sep': ',', 'header': False, 'index': False}
-    df_featured = make_features(df_raw, numerical_pipeline())
+    df_featured = make_features(df_raw, features_pipeline)
 
     df_featured.to_csv(f'{path_processed}/train_val.csv', **csv_args)
     assert df_raw.shape == df_featured.shape
