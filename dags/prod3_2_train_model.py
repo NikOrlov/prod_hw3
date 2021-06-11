@@ -8,7 +8,7 @@ from utils import default_args, VOLUME
 
 
 with DAG(dag_id='_prod3_2_train_model',
-         schedule_interval='@daily',
+         schedule_interval='@weekly',
          start_date=days_ago(0, 2),
          default_args=default_args) as dag:
 

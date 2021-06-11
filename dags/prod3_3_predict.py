@@ -7,17 +7,14 @@ from airflow.operators.bash import BashOperator
 from airflow.sensors.filesystem import FileSensor
 
 
-# prod_model_path = '{{ var.value.PROD_MODEL_PATH }}'
-prod_model_path = '/data/model/2021-06-08/'
+prod_model_path = '{{ var.value.PROD_MODEL_PATH }}'
+
 with DAG(dag_id='_prod3_3_predict',
          default_args=default_args,
          schedule_interval="@daily",
          start_date=days_ago(0, 2)) as dag:
 
     start = DummyOperator(task_id='start')
-
-    print_var = BashOperator(task_id='print_var',
-                             bash_command=f'echo {prod_model_path}')
 
     data_sensor = FileSensor(task_id='data_sensor',
                              filepath='data/raw/{{ ds }}/data.csv',
@@ -43,5 +40,5 @@ with DAG(dag_id='_prod3_3_predict',
 
     end = DummyOperator(task_id='end')
 
-    start >> print_var >> [data_sensor, model_sensor, transformer_sensor] >> prediction >> end
+    start >> [data_sensor, model_sensor, transformer_sensor] >> prediction >> end
 
