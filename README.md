@@ -15,12 +15,15 @@
 
 ## ДАГи:
 Реализуйте dag, который генерирует данные для обучения модели (prod3_1_generate_data):
+
     start (DummyOperator) >> generate_data (DockerOperator) >> end (DummyOperator)
 
 Реализуйте dag, который обучает модель еженедельно, используя данные за текущий день (prod3_2_train_model):
+
     [data_sensor (FileSensor), target_sensor (FileSensor)] >> build_features (DockerOperator) >> split_data (DockerOperator) >> train_model (DockerOperator) >> validate_model (DockerOperator)
 
 Реализуйте dag, который использует модель ежедневно (prod3_3_predict):
+
     start (DummyOperator) >> [data_sensor (FileSensor), model_sensor (FileSensor), transformer_sensor (FileSensor) ] >> prediction (DockerOperator) >> end (DummyOperator)
 
 ## Самооценка
