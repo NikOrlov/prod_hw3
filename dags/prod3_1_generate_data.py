@@ -1,6 +1,5 @@
 from airflow import DAG
 from airflow.providers.docker.operators.docker import DockerOperator
-from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 from airflow.operators.dummy import DummyOperator
 from utils import default_args, VOLUME
