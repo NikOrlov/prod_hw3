@@ -1,7 +1,7 @@
 from airflow.utils.dates import timedelta
 
 
-VOLUME = '/your/abs/path/to/data:/data'
+VOLUME = '/abs/path/data:/data'
 
 default_args = {
     'owner': 'airflow',
